@@ -1,4 +1,18 @@
-# Psychedelic Music Visualizer
+### Cover Art Customization
+
+```bash
+# Round cover art
+python visualizer.py song.mp3 -c cover.jpg --cover-shape round
+
+# Larger cover (1.5x size)
+python visualizer.py song.mp3 -c cover.jpg --cover-size 1.5
+
+# Small cover, no rings
+python visualizer.py song.mp3 -c cover.jpg --cover-size 0.5 --disable-rings
+
+# Minimal look - just waveforms
+python visualizer.py song.mp3 --disable-starfield --disable-rings
+```# Psychedelic Music Visualizer
 
 A powerful Python-based music visualizer that creates stunning audio-reactive videos with rotating waveforms, beat-reactive effects, and customizable visual styles.
 
@@ -77,11 +91,31 @@ tqdm>=4.60.0
 # Simplest form - just audio
 python visualizer.py song.mp3
 
+# Quick proof render (1/4 resolution, ~4x faster)
+python visualizer.py song.mp3 --proof
+
 # With cover image
 python visualizer.py song.mp3 -c cover.jpg
 
 # With cover and text
 python visualizer.py song.mp3 -c cover.jpg -t "Song Title"
+```
+
+### Recommended Workflow
+
+**Step 1: Create a proof render to test settings**
+```bash
+python visualizer.py song.mp3 --proof -p autumn -c cover.jpg -t "Title"
+```
+This renders at 1/4 resolution (640x360 instead of 1280x720) and is about **4x faster**. Perfect for:
+- Testing color palettes
+- Checking text positioning
+- Previewing rotation effects
+- Iterating quickly on your design
+
+**Step 2: Render full quality once you're happy**
+```bash
+python visualizer.py song.mp3 -p autumn -c cover.jpg -t "Title" --fps 60
 ```
 
 ### Color Palettes
@@ -92,6 +126,12 @@ python visualizer.py song.mp3 -p autumn
 python visualizer.py song.mp3 -p winter
 python visualizer.py song.mp3 -p spring
 python visualizer.py song.mp3 -p summer
+
+# Elemental palettes
+python visualizer.py song.mp3 -p fire
+python visualizer.py song.mp3 -p water
+python visualizer.py song.mp3 -p ice
+python visualizer.py song.mp3 -p earth
 
 # Default rainbow
 python visualizer.py song.mp3 -p rainbow
@@ -183,7 +223,7 @@ python visualizer.py song.mp3 \
 | `-o`, `--output` | Output video path | `visualization.mp4` |
 | `-c`, `--cover` | Path to cover image | None |
 | `-t`, `--text` | Text overlay below cover | None |
-| `-p`, `--palette` | Color palette (rainbow/spring/summer/autumn/winter) | `rainbow` |
+| `-p`, `--palette` | Color palette (rainbow/spring/summer/autumn/winter/ice/fire/water/earth) | `rainbow` |
 | `--fps` | Frames per second | `30` |
 | `--resolution` | Custom resolution (WIDTHxHEIGHT) | `1280x720` |
 | `--phone-vertical` | Use 1080x1920 resolution | Off |
@@ -191,6 +231,12 @@ python visualizer.py song.mp3 \
 | `--waveform-rotation` | Waveform rotation axis (x/y/z) | `z` |
 | `--ring-rotation` | Ring rotation axis (x/y/z) | `z` |
 | `--starfield-rotation` | Starfield rotation (none/cw/ccw) | `none` |
+| `--preview` | Render only first N seconds for preview | None |
+| `--cover-shape` | Cover art shape (square/round) | `square` |
+| `--cover-size` | Cover art size multiplier (0.5-2.0) | `1.0` |
+| `--disable-rings` | Disable rings around cover art | Off |
+| `--disable-starfield` | Disable starfield background | Off |
+| `--proof` | Render at 1/4 resolution for fast preview | Off |
 
 ## How It Works
 
@@ -242,17 +288,29 @@ python visualizer.py song.mp3 -p your_palette_name
 
 ## Performance Tips
 
+- **Use `--proof` flag** for fast previews: renders at 1/4 resolution (4x faster!)
 - **Lower resolution** renders faster: `--resolution 854x480`
 - **30 fps** is sufficient for most uses; 60 fps doubles render time
 - **Shorter videos** render proportionally faster
 - **Close other applications** to free up memory
 - Rendering is CPU-intensive and can take several minutes for a 3-minute song at 1080p
 
-### Approximate Render Times (3-minute song, 1080p, 30fps)
+### Approximate Render Times (3-minute song, 30fps)
 
+**Proof Mode (--proof):**
+- Modern laptop (M1/M2): ~1-2 minutes
+- Desktop (i7/Ryzen 7): ~2-3 minutes
+- Older laptop: ~4-5 minutes
+
+**Full Quality (1080p):**
 - Modern laptop (M1/M2): ~5-8 minutes
 - Desktop (i7/Ryzen 7): ~8-12 minutes
 - Older laptop: ~15-20 minutes
+
+**Recommended Workflow:**
+1. Use `--proof` to iterate quickly on design choices
+2. Once satisfied, render full quality
+3. Save ~75% of your time!
 
 ## Troubleshooting
 
@@ -273,30 +331,23 @@ Try reducing resolution or fps, or close other applications.
 
 ## Examples Output
 
-### Rainbow Palette
-- Full spectrum colors
-- High energy, festival vibe
+### Color Palettes
+
+**Rainbow Palette**
+- Full spectrum colors, high energy, festival vibe
 - Works well with electronic music
 
-### Autumn Palette
-- Warm reds, oranges, golds
-- Cozy, intimate feel
-- Great for acoustic, folk, indie
+**Seasonal Palettes:**
+- **Spring**: Fresh greens, blues, pinks - bright and lively, ideal for upbeat songs
+- **Summer**: Bright oranges, yellows, blues - vibrant and energetic, best for pop/dance
+- **Autumn**: Warm reds, oranges, golds - cozy intimate feel, great for acoustic/folk/indie
+- **Winter**: Cool blues and cyans - calm ethereal atmosphere, perfect for ambient/chill
 
-### Winter Palette
-- Cool blues and cyans
-- Calm, ethereal atmosphere
-- Perfect for ambient, chill music
-
-### Spring Palette
-- Fresh greens, blues, pinks
-- Bright and lively
-- Ideal for upbeat, happy songs
-
-### Summer Palette
-- Bright oranges, yellows, blues
-- Vibrant and energetic
-- Best for pop, dance music
+**Elemental Palettes:**
+- **Fire**: Intense reds, oranges, yellows - passionate and energetic, perfect for rock/metal
+- **Water**: Blues, greens, sea greens - flowing and serene, ideal for ambient/downtempo
+- **Ice**: Shades of blue and white - crisp and clear, great for electronic/trance
+- **Earth**: Browns, tans, greens - organic and grounded, perfect for folk/acoustic
 
 ## Credits
 
